@@ -41,8 +41,7 @@ import time
 import chip.clusters as Clusters
 from chip import ChipDeviceCtrl
 from chip.clusters.Types import NullValue
-from chip.testing.event_attribute_reporting import SimpleEventCallback
-from chip.testing.matter_testing import MatterBaseTest, async_test_body, default_matter_test_main, type_matches
+from chip.testing.matter_testing import MatterBaseTest, SimpleEventCallback, async_test_body, default_matter_test_main, matchers
 from mobly import asserts
 
 
@@ -50,7 +49,7 @@ class TC_TIMESYNC_2_13(MatterBaseTest):
     def wait_for_trusted_time_souce_event(self, timeout):
         try:
             ret = self.q.get(block=True, timeout=timeout)
-            asserts.assert_true(type_matches(received_value=ret.Data,
+            asserts.assert_true(matchers.is_type(received_value=ret.Data,
                                 desired_type=Clusters.TimeSynchronization.Events.MissingTrustedTimeSource), "Incorrect type received for event")
         except queue.Empty:
             asserts.fail("Did not receive MissingTrustedTimeSouce event")
