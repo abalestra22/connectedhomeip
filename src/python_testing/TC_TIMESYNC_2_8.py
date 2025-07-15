@@ -42,8 +42,13 @@ from datetime import datetime, timedelta, timezone
 import chip.clusters as Clusters
 from chip.clusters.Types import NullValue
 from chip.interaction_model import InteractionModelError
+<<<<<<< HEAD
+from chip.testing.matter_testing import MatterBaseTest, async_test_body, default_matter_test_main, matchers
+from chip.testing import timeoperations, utc_time_in_matter_epoch
+=======
 from chip.testing.matter_testing import MatterBaseTest, async_test_body, default_matter_test_main, type_matches
 from chip.testing.timeoperations import compare_time, utc_time_in_matter_epoch
+>>>>>>> parent of 05114c1752 (Initial commit to refactor type_matches to matchers.is_type)
 from chip.tlv import uint
 from mobly import asserts
 
@@ -106,11 +111,11 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
 
         self.print_step(4, "Read UTCTime")
         utc = await self.read_ts_attribute_expect_success(utc_attr)
-        compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
 
         self.print_step(5, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(), tolerance=timedelta(seconds=5))
 
         self.print_step(6, "Send SetDSTOffset command")
         th_utc = utc_time_in_matter_epoch()
@@ -119,18 +124,18 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
 
         self.print_step(7, "Read UTCTime")
         utc = await self.read_ts_attribute_expect_success(utc_attr)
-        compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
 
         self.print_step(8, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
 
         self.print_step(9, "Wait 15s")
         time.sleep(15)
 
         self.print_step(10, "Read UTCTime")
         utc = await self.read_ts_attribute_expect_success(utc_attr)
-        compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=utc, offset=timedelta(), tolerance=timedelta(seconds=5))
 
         self.print_step(11, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
@@ -142,14 +147,14 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
 
         self.print_step(13, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
 
         self.print_step(14, "Wait 15s")
         time.sleep(15)
 
         self.print_step(15, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
 
         self.print_step(16, "Read DSTOffsetListMaxSize")
         dst_list_size = await self.read_ts_attribute_expect_success(attributes.DSTOffsetListMaxSize)
@@ -164,7 +169,7 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
         self.print_step(18, "Read LocalTime")
         if dst_list_size > 1:
             local = await self.read_ts_attribute_expect_success(local_attr)
-            compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
+            timeoperations.compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
 
         self.print_step(19, "Wait 15s")
         if dst_list_size > 1:
@@ -173,7 +178,7 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
         self.print_step(20, "Read LocalTime")
         if dst_list_size > 1:
             local = await self.read_ts_attribute_expect_success(local_attr)
-            compare_time(received=local, offset=timedelta(), tolerance=timedelta(seconds=5))
+            timeoperations.compare_time(received=local, offset=timedelta(), tolerance=timedelta(seconds=5))
 
         self.print_step(21, "Wait 15s")
         if dst_list_size > 1:
@@ -182,7 +187,7 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
         self.print_step(22, "Read LocalTime")
         if dst_list_size > 1:
             local = await self.read_ts_attribute_expect_success(local_attr)
-            compare_time(received=local, offset=timedelta(seconds=7200), tolerance=timedelta(seconds=5))
+            timeoperations.compare_time(received=local, offset=timedelta(seconds=7200), tolerance=timedelta(seconds=5))
 
         self.print_step(23, "Wait 15s")
         if dst_list_size > 1:
@@ -199,7 +204,7 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
 
         self.print_step(26, "Read LocalTime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=-3600), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=-3600), tolerance=timedelta(seconds=5))
 
         self.print_step(27, "Send SetDSTOffset command with DST starting in the future")
         valid = utc_time_in_matter_epoch(datetime.now(tz=timezone.utc) + timedelta(seconds=10))
@@ -208,14 +213,14 @@ class TC_TIMESYNC_2_8(MatterBaseTest):
 
         self.print_step(28, "Read Localtime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=0), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=0), tolerance=timedelta(seconds=5))
 
         self.print_step(29, "Wait 15s")
         time.sleep(15)
 
         self.print_step(30, "Read Localtime")
         local = await self.read_ts_attribute_expect_success(local_attr)
-        compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
+        timeoperations.compare_time(received=local, offset=timedelta(seconds=3600), tolerance=timedelta(seconds=5))
 
         self.print_step(31, "Send SetDSTOffset command")
         dst = [dst_struct(offset=0, validStarting=0, validUntil=NullValue)]
